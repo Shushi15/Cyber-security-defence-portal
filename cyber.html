@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cyber Security Defence Portal</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(120deg, #0f2027, #000);
+    color: #00ffcc;
+    min-height: 100vh;
+}
+
+.page {
+    display: none;
+    padding: 40px;
+}
+
+.active {
+    display: block;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card {
+    max-width: 400px;
+    margin: auto;
+    background: rgba(0,255,204,0.1);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #00ffcc;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: none;
+}
+
+button {
+    background: #00ffcc;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ccaa;
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.status {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.safe { color: #00ff00; }
+.warning { color: #ffcc00; }
+.danger { color: #ff4444; }
+</style>
+</head>
+
+<body>
+
+<!-- ================= PAGE 1 REGISTER ================= -->
+<div class="page active" id="page1">
+    <h1>📝 Create Account</h1>
+    <div class="card">
+        <input type="text" id="regName" placeholder="Enter Your Name">
+        <input type="password" id="regPass" placeholder="Create Password">
+        <button onclick="register()">Register</button>
+        <p id="regMsg"></p>
+        <button onclick="showPage(2)">Go to Login</button>
+    </div>
+</div>
+
+<!-- ================= PAGE 2 LOGIN ================= -->
+<div class="page" id="page2">
+    <h1>🔐 Login</h1>
+    <div class="card">
+        <input type="text" id="loginName" placeholder="Enter Your Name">
+        <input type="password" id="loginPass" placeholder="Enter Password">
+        <button onclick="login()">Login</button>
+        <p id="loginMsg"></p>
+    </div>
+</div>
+
+<!-- ================= PAGE 3 DASHBOARD ================= -->
+<div class="page" id="page3">
+    <h1>📊 Dashboard</h1>
+    <div class="nav">
+        <button onclick="showPage(4)">Personal Details</button>
+        <button onclick="showPage(5)">Security Panel</button>
+    </div>
+
+    <div class="card">
+        <p><b>Welcome:</b> <span id="userDisplay"></span></p>
+        <p><b>Status:</b> <span class="safe">System Online</span></p>
+        <p><b>Access Level:</b> User</p>
+    </div>
+</div>
+
+<!-- ================= PAGE 4 PERSONAL DETAILS ================= -->
+<div class="page" id="page4">
+    <h1>👤 Personal Details</h1>
+    <div class="nav">
+        <button onclick="showPage(3)">Dashboard</button>
+        <button onclick="showPage(5)">Security Panel</button>
+    </div>
+
+    <div class="card">
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Gmail">
+        <input type="password" placeholder="Password">
+        <input type="date">
+        <button>Save Details</button>
+    </div>
+</div>
+
+<!-- ================= PAGE 5 SECURITY ================= -->
+<div class="page" id="page5">
+    <h1>🛡 Security Control Panel</h1>
+    <div class="nav">
+        <button onclick="showPage(3)">Dashboard</button>
+        <button onclick="showPage(4)">Personal Details</button>
+    </div>
+
+    <div class="card">
+        <h3>🔥 Firewall Status</h3>
+        <p class="status safe" id="firewall">ACTIVE</p>
+        <button onclick="toggleFirewall()">Toggle Firewall</button>
+
+        <h3>⚠ Threat Detection</h3>
+        <p class="status safe" id="threat">No Threats</p>
+        <button onclick="detectThreat()">Scan Threats</button>
+
+        <h3>🧪 System Scan</h3>
+        <p class="status" id="scan">Idle</p>
+        <button onclick="runScan()">Run Scan</button>
+    </div>
+</div>
+
+<script>
+/* ---------- PAGE SWITCH ---------- */
+function showPage(page) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page" + page).classList.add("active");
+}
+
+/* ---------- REGISTER ---------- */
+function register() {
+    let name = document.getElementById("regName").value;
+    let pass = document.getElementById("regPass").value;
+
+    if (name === "" || pass === "") {
+        document.getElementById("regMsg").textContent = "❌ Fill all fields";
+        return;
+    }
+
+    localStorage.setItem("username", name);
+    localStorage.setItem("password", pass);
+
+    document.getElementById("regMsg").textContent = "✅ Account Created Successfully";
+}
+
+/* ---------- LOGIN ---------- */
+function login() {
+    let name = document.getElementById("loginName").value;
+    let pass = document.getElementById("loginPass").value;
+
+    let savedName = localStorage.getItem("username");
+    let savedPass = localStorage.getItem("password");
+
+    if (name === savedName && pass === savedPass) {
+        document.getElementById("userDisplay").textContent = name;
+        showPage(3);
+    } else {
+        document.getElementById("loginMsg").textContent = "❌ Invalid Credentials";
+    }
+}
+
+/* ---------- FIREWALL ---------- */
+let firewallOn = true;
+function toggleFirewall() {
+    let fw = document.getElementById("firewall");
+    firewallOn = !firewallOn;
+    fw.textContent = firewallOn ? "ACTIVE" : "DISABLED";
+    fw.className = firewallOn ? "status safe" : "status danger";
+}
+
+/* ---------- THREAT ---------- */
+function detectThreat() {
+    let threat = document.getElementById("threat");
+    if (Math.random() > 0.6) {
+        threat.textContent = "⚠ Malware Detected";
+        threat.className = "status danger";
+    } else {
+        threat.textContent = "System Secure";
+        threat.className = "status safe";
+    }
+}
+
+/* ---------- SCAN ---------- */
+function runScan() {
+    let scan = document.getElementById("scan");
+    scan.textContent = "Scanning...";
+    scan.className = "status warning";
+    setTimeout(() => {
+        scan.textContent = "Scan Completed – Secure";
+        scan.className = "status safe";
+    }, 3000);
+}
+</script>
+
+</body>
+</html>
